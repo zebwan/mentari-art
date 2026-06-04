@@ -97,6 +97,33 @@ function setupHomeWorksSlider() {
   });
 }
 
+function setupHeroSlideshow() {
+  const tracks = document.querySelectorAll(".hero-slide-track");
+  if (!tracks.length) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  tracks.forEach((track) => {
+    const slides = Array.from(track.querySelectorAll(".hero-slide"));
+    if (!slides.length) return;
+
+    let activeIndex = slides.findIndex((slide) => slide.classList.contains("is-active"));
+    if (activeIndex < 0) activeIndex = 0;
+
+    slides.forEach((slide, index) => {
+      slide.classList.toggle("is-active", index === activeIndex);
+    });
+
+    if (reduceMotion || slides.length < 2) return;
+
+    window.setInterval(() => {
+      slides[activeIndex].classList.remove("is-active");
+      activeIndex = (activeIndex + 1) % slides.length;
+      slides[activeIndex].classList.add("is-active");
+    }, 4800);
+  });
+}
+
 function renderArchive() {
   if (typeof artworks === "undefined") return;
 
@@ -229,5 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderHomeWorks();
   renderArchive();
   setupHomeWorksSlider();
+  setupHeroSlideshow();
   setupReveal();
 });
